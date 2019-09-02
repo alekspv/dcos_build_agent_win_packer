@@ -1,0 +1,7 @@
+{
+  "appId": "c807518a-e9d4-4280-a96d-eaaf9da3f6a0",
+  "displayName": "WuspacvkerSP",
+  "name": "http://WuspacvkerSP",
+  "password": "83433c8b-aec5-412f-b82e-dc1fe372ee91",
+  "tenant": "96ed0ab2-2a69-460c-bf10-0e281c80b65b"
+}
