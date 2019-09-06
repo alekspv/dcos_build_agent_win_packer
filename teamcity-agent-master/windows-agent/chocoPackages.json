@@ -15,6 +15,31 @@
         {
             "name": "awscli",
             "version": "1.14.43"
+        },
+        {
+            "name": "7zip",
+            "version": "19.0"
+            
+        },
+        {
+            "name": "vscode",
+            "version": "1.38.0"
+            
+        },
+        {
+            "name": "Sysinternals",
+            "version": "2019.9.5"
+            
+        },
+        {
+            "name": "googlechrome",
+            "version": "76.0.3809.132"
+            
+        },
+        {
+            "name": "notepadplusplus",
+            "version": "7.7.1"
+            
         }
     ]
 }
