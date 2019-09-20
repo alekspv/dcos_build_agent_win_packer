@@ -1,0 +1,191 @@
+{
+"AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {   
+"obVPC":
+        {
+            "Type": "AWS::EC2::VPC",
+            "Properties":
+            {
+                "CidrBlock": "172.41.0.0/16",
+                "EnableDnsSupport": "true",
+                "EnableDnsHostnames": "true",
+                "InstanceTenancy": "default",
+                "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "obVPC"
+                }]
+            }
+        },
+"obIGW":
+        {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties":
+            {
+                "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "obIGW"
+                }]
+            }
+        },
+"obGatewayAttachment":
+        {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties":
+            {
+                "VpcId":
+                {
+                    "Ref": "obVPC"
+                },
+                "InternetGatewayId":
+                {
+                    "Ref": "obIGW"
+                }
+            }
+        },
+"obRTB":
+        {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties":
+            {
+                "VpcId":
+                {
+                    "Ref": "obVPC"
+                },
+                "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "obRTB"
+                }]
+            }
+        },
+"obRoute":
+        {
+            "Type": "AWS::EC2::Route",
+            "Properties":
+            {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId":
+                {
+                    "Ref": "obIGW"
+                },
+                "RouteTableId":
+                {
+                    "Ref": "obRTB"
+                }
+            }
+        },
+"obSubnet":
+        {
+            "Type": "AWS::EC2::Subnet",
+            "Properties":
+            {
+                "VpcId":
+                {
+                    "Ref": "obVPC"
+                },
+                "CidrBlock": "172.41.0.0/16",
+                "AvailabilityZone":
+                {
+                    "Fn::Select": [
+                        0,
+                        {
+                            "Fn::GetAZs": ""
+                        }
+                    ]
+                }
+            }
+        },
+"obSubnetRTA":
+        {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties":
+            {
+                "RouteTableId":
+                {
+                    "Ref": "obRTB"
+                },
+                "SubnetId":
+                {
+                    "Ref": "obSubnet"
+                }
+            }
+        },
+"obSG":
+        {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties":
+            {
+                "VpcId":
+                {
+                    "Ref": "obVPC"
+                },
+                "GroupDescription": "Enable HTTP, HTTPS and SSH access",
+                "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "obVPC Security Group"
+                }],
+                "SecurityGroupIngress": [
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": "443",
+                    "ToPort": "443",
+                    "CidrIp": "0.0.0.0/0"
+                },
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": "80",
+                    "ToPort": "80",
+                    "CidrIp": "0.0.0.0/0"
+                },
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": "3389",
+                    "ToPort": "3389",
+                    "CidrIp": "0.0.0.0/0"
+                }]
+            }
+        },
+"obbuild":
+        {
+            "Type": "AWS::EC2::Instance",
+            "Properties":
+            {
+                "ImageId": "ami-05b1ede17a74c12d0",
+                "InstanceType": "t3.xlarge",
+                "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "obbuild"
+                }],
+                "BlockDeviceMappings" : [
+                    {
+                       "DeviceName" : "/dev/sda1",
+                       "Ebs" : { "VolumeSize" : "200" }
+                    }
+                 ],
+                "KeyName":"ob_us-east-1_key",
+                "NetworkInterfaces": [
+                {
+                    "SubnetId":
+                    {
+                        "Ref": "obSubnet"
+                    },
+                    "AssociatePublicIpAddress": "true",
+                    "DeviceIndex": "0",
+                    "GroupSet": [
+                    {
+                        "Ref": "obSG"
+                    }]
+                }]
+            }
+        }
+    }
+}
+
+
+
+
+

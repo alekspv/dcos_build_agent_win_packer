@@ -1,36 +1,20 @@
 {
   "builders": [{
-    "type": "azure-arm",
-
-    "client_id": "c807518a-e9d4-4280-a96d-eaaf9da3f6a0",
-    "client_secret": "83433c8b-aec5-412f-b82e-dc1fe372ee91",
-    "resource_group_name": "wuspacker",
-    "storage_account": "wusstacpacker3",
-    "subscription_id": "518215e0-5518-4de9-b31d-3d681376daf7",
-	"tenant_id": "96ed0ab2-2a69-460c-bf10-0e281c80b65b",
-
-
-    "capture_container_name": "packer",
-    "capture_name_prefix": "packer",
-
-
-    "os_type": "Windows",
-    "os_disk_size_gb": "60",
-    "image_publisher": "MicrosoftWindowsServer",
-    "image_offer": "WindowsServer",
-    "image_sku": "2019-Datacenter-with-Containers-smalldisk",
-
+    "type": "amazon-ebs",
+    "profile": "966122790603_Mesosphere-PowerUser",
+    "region": "us-east-1",
+    "instance_type": "t3.xlarge",
     "communicator": "winrm",
-    "winrm_use_ssl": "true",
-    "winrm_insecure": "true",
-    "winrm_username": "packer",
-    "winrm_timeout": "20m",
+    "ami_name": "ob_packer_build_20190916",
+    "user_data_file" :"scripts/SetUpWinRM.ps1",
+    "winrm_username": "Administrator",
+    "winrm_use_ssl": true,
+    "winrm_insecure": true,
+    "source_ami": "ami-08dd25c657c5ee0f0"
+    
 
-    "location": "West US",
-    "vm_size": "Standard_F8s_v2"
   }],
-  "provisioners": [
-    {
+  "provisioners": [{
       "type": "file",
       "source": "./teamcity-agent-master/windows-agent/helpers.psm1",
       "destination": "C:\\Users\\Administrator\\helpers.psm1"
@@ -116,8 +100,10 @@
       "destination": "C:\\Users\\Administrator\\generalize_system.ps1"
     },
     {
-      "type": "powershell",
-      "inline": [ "Powershell -NonInteractive -File \"C:\\Users\\Administrator\\generalize_system.ps1\"" ]
-    }
-  ]
+    "type": "powershell",
+    "inline": [
+        "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule",
+        "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/SysprepInstance.ps1 -NoShutdown"
+    ]
+}]
 }

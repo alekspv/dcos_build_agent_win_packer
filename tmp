@@ -1,0 +1,1 @@
+docker run --name=package-cleaner-zugomsxnub -m 16gb --cpu-count 4 -v C:\\BuildAgent\\dcos/packages/cache/packages/adminrouter:c:\\pkg/:rw microsoft/windowsservercore:1709 cmd.exe /c if exist c:\\pkg\\src rmdir /s /q c:\\pkg\\src
